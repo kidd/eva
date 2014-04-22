@@ -97,6 +97,9 @@ local builtins = {
   ['<'] = function(x,y) return x<y end,
   ['>'] = function(x,y) return x>y end,
   ['='] = function(x,y) return x == y end,
+  ['or'] = function(x,y) return x or y end,
+  ['not'] = function(x) return not x end,
+  ['and'] = function(x,y) return x and y end,
   ['-'] = function(x,y,...)
       if not y then return  0 - x end
       local r = x-y
