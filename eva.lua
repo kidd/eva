@@ -3,24 +3,48 @@ local i = require'inspect'
 
 require 'lpeg'
 
-local function map(fun, t)
-  local res = {}
-  for k,v in ipairs(t) do
-    res[#res+1] = fun(v)
+function foldl(initial, fun, t)
+  local accum = initial
+  for i,v in ipairs(t) do
+    accum = fun(accum, v)
   end
-  return res
+  return accum
 end
 
-local function each(fun, t)
-  for k,v in ipairs(t) do
-    fun(v)
+function map(fun, t)
+  local f = function(acc, x)
+    table.insert(acc, fun(x))
+    return acc
   end
+  local init = {}
+  return foldl(init, f,  t)
 end
+
+function each(fun, t)
+  local f = function(_, x)
+    fun(x)
+  end
+  return foldl({}, f, t)
+end
+
+-- local function map(fun, t)
+--   local res = {}
+--   for k, v in ipairs(t) do
+--     res[#res+1] = fun(v)
+--   end
+--   return res
+-- end
+
+-- local function each(fun, t)
+--   for k,v in ipairs(t) do
+--     fun(v)
+--   end
+-- end
 
 local inspect
 local printers = {
   ['function'] = function(x) return '<function>'  end,
-  table = function(x)
+  list = function(x)
     local b = {}
     table.insert(b, '(')
     each(function(y)
@@ -30,11 +54,11 @@ local printers = {
     table.insert(b, ') ')
     return table.concat(b)
   end,
-  number = print,
-  string = print,
+  number = tostring,
+  string = tostring,
 }
 
-inspect = function(x)
+local function typeof(x)
   local object_type
   if type(x) == 'table' and getmetatable(x) then
     object_type =  getmetatable(x).class
@@ -43,8 +67,13 @@ inspect = function(x)
   else
     object_type = type(x)
   end
+  return object_type
+end
+
+inspect = function(x)
+  local object_type = typeof(x)
   if printers[object_type] then
-    print(printers[object_type](x))
+    return printers[object_type](x)
   end
 end
 
@@ -134,7 +163,7 @@ function lookup(str, env)
   if env[str] then
     return env[str]
   else
-    if not env.parent then error('nonexistant ' .. str) end
+    if not env.parent then error('nonexistant "' .. str ..'"') end
     return lookup(str, env.parent)
   end
 end
@@ -177,7 +206,14 @@ function eval(t, env)
   return eval(h, env)(unpack(map(function(x) return eval(x, env) end, ta)))
 end
 
-function _begin(env, x) end
+function _begin(env, ...)
+  local x = {...}
+  for i = 1, #x-1 do
+    eval(x[i], env)
+  end
+
+  return eval(x[#x], env)
+end
 
 function _set(env, name, to)
   name = name:gsub(" ", "")
@@ -186,13 +222,23 @@ function _set(env, name, to)
   return e[name]
 end
 
-function _define(env, name, thing )
-  name = name:gsub(" ", "")
-  env[name] = eval(thing, env)
-  return env[name]
+function _define(env, name, ...)
+  if typeof(name) == 'list' then
+    name[1] = name[1]:gsub(" ", "")
+    pinspect(thing)
+    env[name[1]] = _lambda(env, tail(name), ...)
+    return env[name[1]]
+  else
+    name = name:gsub(" ", "")
+    env[name] = eval(thing, env)
+    return env[name]
+  end
 end
 
-function _lambda(env, params, body)
+function _lambda(env, params, ...)
+  local body = {...}
+  if #body>1 then body = {'begin', unpack(body)} end
+  print('lambda, ', i(body))
   return Fun.new(params, body, Env.new(env))
 end
 
