@@ -238,7 +238,7 @@ end
 
 function _lambda(env, params, ...)
   local body = {...}
-  if #body>1 then body = {'begin', unpack(body)} end
+  if #body>1 then body = {'begin', unpack(body)}  else body = body[1] end
   print('lambda, ', i(body))
   return Fun.new(params, body, Env.new(env))
 end
