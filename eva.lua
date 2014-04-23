@@ -159,24 +159,22 @@ local function tail(t)
   return res
 end
 
-function lookup(str, env)
+local function lookup_gen(str, env, f)
   str = str:gsub(" ", "")
   if env[str] then
-    return env[str]
+    return f(str, env)
   else
     if not env.parent then error('nonexistant "' .. str ..'"') end
     return lookup(str, env.parent)
   end
 end
 
-function lookup_l(str, env)
-  str = str:gsub(" ", "")
-  if env[str] then
-    return env
-  else
-    if not env.parent then error('nonexistant ' .. str) end
-    return lookup_l(str, env.parent)
-  end
+local function lookup(str,env)
+  return lookup_gen(str, env, function(str,env) return env[str] end)
+end
+
+local function lookup_l(str,env)
+  return lookup_gen(str, env, function(str,env) return env end)
 end
 
 local _if
