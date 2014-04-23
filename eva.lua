@@ -126,6 +126,7 @@ local builtins = {
   ['<'] = function(x,y) return x<y end,
   ['>'] = function(x,y) return x>y end,
   ['='] = function(x,y) return x == y end,
+  ['*'] = function(x,y) return x * y end,
   ['or'] = function(x,y) return x or y end,
   ['not'] = function(x) return not x end,
   ['and'] = function(x,y) return x and y end,
@@ -145,7 +146,7 @@ local P = [[
 S <- <atom> / '(' %s* <S>* -> {} ')' %s*
 atom <- { number / symbol } %s*
 number <- '-' [0-9]+ / [0-9]+
-symbol <- [!=<>a-zA-Z_+-]+ %s*
+symbol <- [*!=<>a-zA-Z_+-]+ %s*
 ]]
 
 local function head(t) return t[1] end
