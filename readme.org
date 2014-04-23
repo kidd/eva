@@ -1,0 +1,12 @@
+* What
+  Minimal lisp interpreter in Lua. Trying to make one of these from
+  time to time. It's very simplistic, ineficient and not even very
+  lispish.
+* Why Eva?
+  Too Many Puns:
+  - Extra-Vehicular Activity. Spacewalks
+  - eva.lua is the name of the file. which in spanish means evaluate.
+  - Eva lu Ator.
+
+* Did you spend more time on the name than writing the actual interpreter?
+  No, but I spent a fair amount of time
