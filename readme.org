@@ -17,3 +17,8 @@
     (fib 10) => 3628800
   - (define foo (lambda (x) (+ x 1)))
     (goo 41) => 42
+  - (define foo 32)
+    (define bar (lambda (x) (+ foo x)))
+    (bar 3) => 35
+    (set! foo 10) => 10
+    (bar 3) => 13

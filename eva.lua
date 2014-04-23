@@ -229,7 +229,8 @@ function _define(env, name, ...)
     return env[name[1]]
   else
     name = name:gsub(" ", "")
-    env[name] = eval(thing, env)
+    if #{...} ~= 1 then error("incorrect define") end
+    env[name] = eval(..., env)
     return env[name]
   end
 end
