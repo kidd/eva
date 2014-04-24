@@ -8,8 +8,8 @@
 #   - eva.lua is the name of the file. which in spanish means evaluate.
 #   - Eva lu Ator.
 
-* Did you spend more time on the name than writing the actual interpreter?
-  No, but I spent a fair amount of time
+# * Did you spend more time on the name than writing the actual interpreter?
+#   No, but I spent a fair amount of time
 
 
 * Examples
